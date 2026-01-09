@@ -8,12 +8,9 @@ class Solution:
         child_idx = 0
 
         while child_idx < len(g) and cookie_idx < len(s):
-            while cookie_idx < len(s) and s[cookie_idx] < g[child_idx]:
-                cookie_idx += 1
-            
-            if cookie_idx < len(s):
-                res += 1
-                cookie_idx += 1
-                child_idx+=1
+            if s[cookie_idx] >= g[child_idx]:
+                child_idx += 1
 
-        return res
+            cookie_idx += 1
+
+        return child_idx
