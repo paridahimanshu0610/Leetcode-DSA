@@ -18,18 +18,15 @@ class Solution:
 
     def jump(self, a: List[int]) -> int:
         n = len(a)
-        curr_range = (0, 0)
+        l, r = (0, 0)
         jumps = 0
 
-        while curr_range[0] < n:
-            if curr_range[1] >= n-1:
-                return jumps
-
+        while r < n-1:
             max_reach = -1
-            for idx in range(curr_range[0], curr_range[1]+1):
+            for idx in range(l, r+1):
                 max_reach = min(max(max_reach, idx+a[idx]), n-1)
 
-            curr_range = (curr_range[1]+1, max_reach)
+            l, r = (r+1, max_reach)
             jumps += 1
 
         return jumps
