@@ -17,17 +17,19 @@ class Solution:
         return dp[idx]
 
     def jump(self, a: List[int]) -> int:
-        dp = [None for _ in range(len(a))]
         n = len(a)
-        dp[n-1] = 0
+        curr_range = (0, 0)
+        jumps = 0
 
-        for idx in range(n-2, -1, -1):
-            max_leap = min(n-idx-1, a[idx])
-            min_jumps = float('inf')
-            for leap in range(max_leap, 0, -1):
-                next_idx = idx+leap
-                min_jumps = min(min_jumps, 1 + dp[next_idx]) 
+        while curr_range[0] < n:
+            if curr_range[1] >= n-1:
+                return jumps
 
-            dp[idx] = min_jumps            
+            max_reach = -1
+            for idx in range(curr_range[0], curr_range[1]+1):
+                max_reach = min(max(max_reach, idx+a[idx]), n-1)
 
-        return dp[0]
+            curr_range = (curr_range[1]+1, max_reach)
+            jumps += 1
+
+        return jumps
