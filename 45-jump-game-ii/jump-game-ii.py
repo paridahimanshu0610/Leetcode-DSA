@@ -1,32 +1,29 @@
 class Solution:
-    def get_min_jumps(self, a, idx, dp):
-        n = len(a)
-        if idx == n-1:
+    def min_jumps(self, a, curr_pos, dp):
+        if curr_pos == len(a)-1:
             return 0
 
-        if dp[idx] is not None:
-            return dp[idx]
+        if dp[curr_pos] is not None:
+            return dp[curr_pos]
 
-        max_leap = min(n-idx-1, a[idx])
         min_jumps = float('inf')
-        for leap in range(max_leap, 0, -1):
-            next_idx = idx+leap
-            min_jumps = min(min_jumps, 1 + self.get_min_jumps(a, next_idx, dp)) 
-
-        dp[idx] = min_jumps
-        return dp[idx]
+        max_leap = min(a[curr_pos], len(a)-curr_pos-1)
+        for leap in range(1, max_leap+1):
+            min_jumps = min(min_jumps, 1+self.min_jumps(a, curr_pos+leap, dp))
+        
+        dp[curr_pos] = min_jumps
+        return min_jumps 
 
     def jump(self, a: List[int]) -> int:
         n = len(a)
-        l, r = (0, 0)
-        jumps = 0
+        dp = [None]*n
+        dp[n-1] = 0
 
-        while r < n-1:
-            max_reach = -1
-            for idx in range(l, r+1):
-                max_reach = min(max(max_reach, idx+a[idx]), n-1)
+        for curr_pos in range(n-2, -1, -1):
+            min_jumps = float('inf')
+            max_leap = min(a[curr_pos], len(a)-curr_pos-1)
+            for leap in range(1, max_leap+1):
+                min_jumps = min(min_jumps, 1+dp[curr_pos+leap])
+            dp[curr_pos] = min_jumps            
 
-            l, r = (r+1, max_reach)
-            jumps += 1
-
-        return jumps
+        return dp[0]
