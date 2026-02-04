@@ -1,40 +1,25 @@
 class Solution:
-    def total_paths(self, a, x, y, dp):
-        if (x >= len(a)) or (y>=len(a[0])) or (a[x][y]==1):
+    def getTotalPaths(self, a, ii, jj, dp):
+        if ii == len(a)-1 and jj == len(a[0])-1:
+            dp[ii][jj] = 1 if a[ii][jj]==0 else 0
+            return dp[ii][jj]
+
+        if ii > len(a)-1 or jj > len(a[0])-1:
             return 0
         
-        if (x==len(a)-1) and (y==len(a[0])-1):
-            return 1
-        
-        if dp[x][y]!=-1:
-            return dp[x][y]
+        # If current cell itself is an obstacle
+        if a[ii][jj] == 1:
+            dp[ii][jj] = 0
+            return dp[ii][jj]
 
-        dp[x][y] = self.total_paths(a, x+1, y, dp) + self.total_paths(a, x, y+1, dp)
-        return dp[x][y]
+        if dp[ii][jj]!=-1:
+            return dp[ii][jj]
 
+        dp[ii][jj] = self.getTotalPaths(a, ii+1, jj, dp) + self.getTotalPaths(a, ii, jj+1, dp)
+
+        return dp[ii][jj]
+             
     def uniquePathsWithObstacles(self, a: List[List[int]]) -> int:
-        m, n = len(a), len(a[0])
-        if a[m-1][n-1]==1:
-            return 0
-        
-        dp = [[0]*n for _ in range(m)]
-        dp[m-1][n-1] = 1
-        
-        for j in range(n-2, -1, -1):
-            if a[m-1][j]==1:
-                break
-            dp[m-1][j] = 1
-
-        for i in range(m-2, -1, -1):
-            if a[i][n-1]==1:
-                break
-            dp[i][n-1] = 1
-
-        for i in range(m-2,-1,-1):
-            for j in range(n-2,-1,-1):
-                if a[i][j]==1:
-                    dp[i][j]=0
-                else:
-                    dp[i][j] = dp[i+1][j]+dp[i][j+1]
-
-        return dp[0][0]
+        # dp[i][j] stores the total paths from current cell to the last cell (m-1, n-1)
+        dp = [[-1]*len(a[0]) for _ in range(len(a))]
+        return self.getTotalPaths(a, 0, 0, dp)
