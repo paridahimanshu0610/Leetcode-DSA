@@ -15,19 +15,18 @@ class Solution:
         return dp[ii][jj]
 
     def minPathSum(self, a: List[List[int]]) -> int:
-        dp = [[-1]*len(a[0]) for _ in range(len(a))]
         m, n = len(a), len(a[0])
-
-        dp[m-1][n-1] = a[m-1][n-1]
+        dp = [-1]*n
+        dp[n-1] = a[m-1][n-1]
 
         for i in range(m-1, -1, -1):
             for j in range(n-1, -1, -1):
                 if (i==m-1) and (j==n-1):
                     continue
-                right = dp[i][j+1] if j+1 < n else float('inf') 
-                down = dp[i+1][j] if i+1 < m else float('inf')
+                right = dp[j+1] if j+1 < n else float('inf') 
+                down = dp[j] if i+1 < m else float('inf')
 
-                dp[i][j] = a[i][j] + min(right, down)
+                dp[j] = a[i][j] + min(right, down)
 
-        return dp[0][0]
+        return dp[0]
         
