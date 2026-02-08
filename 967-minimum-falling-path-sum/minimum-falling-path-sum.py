@@ -19,12 +19,11 @@ class Solution:
         dp = [item for item in a[-1]]
 
         for ii in range(m-2, -1, -1):
-            temp = []
+            bottom_left = float('inf')
             for jj in range(n):
                 bottom = dp[jj]
-                bottom_left = dp[jj-1] if jj-1 >= 0 else float('inf')
                 bottom_right = dp[jj+1] if jj+1 < n else float('inf')
-                temp.append(a[ii][jj] + min(bottom, bottom_left, bottom_right))
-            dp = temp
+                dp[jj] = a[ii][jj] + min(bottom, bottom_left, bottom_right)
+                bottom_left = bottom
             
         return min(dp) 
