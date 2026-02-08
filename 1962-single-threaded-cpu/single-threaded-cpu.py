@@ -1,38 +1,32 @@
-from heapq import *
-
+import heapq as hq
 class Solution:
-    def identify_tasks(self, start_index, curr_time, lt):
-        for i in range(start_index, len(lt)):
-            task_enqueue_time, task_processing_time, _ = lt[i] 
-            if task_enqueue_time > curr_time:
-                return i
-
-        return len(lt)
-
     def getOrder(self, a: List[List[int]]) -> List[int]:
-        lt = [(temp[0], temp[1], i) for i, temp in enumerate(a)] # labeled tasks
-        lt.sort()
+        for i in range(len(a)):
+            a[i] = [i] + a[i]
+        a.sort(key = lambda x: (x[1], x[2]))
+        task_heap = []
+        hq.heapify(task_heap)
 
-        curr_time = lt[0][0] #Enqueue time of the first task
-        curr_tasks = []
-        heapify(curr_tasks)
-        completed_tasks = []
-        curr_index = 0
+        curr_time = a[0][1]
+        res = []
+        curr_task = 0
 
-        while len(completed_tasks) < len(a) and curr_index < len(lt):
-            while curr_index < len(lt) and curr_time >= lt[curr_index][0]:
-                heappush(curr_tasks, [lt[curr_index][1], lt[curr_index][2]])
-                curr_index += 1
-
-            if len(curr_tasks)==0:
-                curr_time = lt[curr_index][0]
+        while curr_task < len(a):
+            # Pushing all currently available tasks onto the heap
+            while curr_task < len(a) and a[curr_task][1] <= curr_time:
+                hq.heappush(task_heap, [a[curr_task][2], a[curr_task][0]])
+                curr_task += 1
+            
+            if len(task_heap) > 0:
+                process_time, idx = hq.heappop(task_heap)
+                res.append(idx)
+                curr_time += process_time
             else:
-                process_time, idx = heappop(curr_tasks)
-                completed_tasks.append(idx)
-                curr_time += process_time 
+                if curr_task < len(a):
+                    curr_time = a[curr_task][1]
 
-        while len(completed_tasks) < len(a):
-            process_time, idx = heappop(curr_tasks)
-            completed_tasks.append(idx)
-                        
-        return completed_tasks 
+        while len(task_heap) > 0:
+            _, idx = hq.heappop(task_heap)
+            res.append(idx)            
+        
+        return res
