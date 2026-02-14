@@ -1,22 +1,28 @@
 class Solution:
     def insert(self, a: List[List[int]], new_i: List[int]) -> List[List[int]]:
-        res = []
-        n = len(a)
-        i = 0
+        i, n = 0, len(a)
 
         while i < n and a[i][1] < new_i[0]:
-            res.append(a[i])
             i += 1
+
+        if i == n:
+            return a + [new_i]
+        elif i == 0 and new_i[1] < a[i][0]:
+            return [new_i] + a
+        elif new_i[1] < a[i][0]:
+            return a[0:i] + [new_i] + a[i:] 
         
-        while i < n and a[i][0] <= new_i[1]:
-            new_i[0] = min(a[i][0], new_i[0])
-            new_i[1] = max(a[i][1], new_i[1])
-            i += 1
+        res = a[0:i]
+        curr = [min(a[i][0], new_i[0]), max(a[i][1], new_i[1])]
 
-        res.append(new_i)
+        for j in range(i, n):
+            temp = a[j]
+            if curr[1] < temp[0]:
+                res.append(curr)
+                curr = temp
+            else:
+                curr = [min(curr[0], temp[0]), max(curr[1], temp[1])]
 
-        while i < n:
-            res.append(a[i])
-            i += 1
+        res.append(curr)
 
         return res
