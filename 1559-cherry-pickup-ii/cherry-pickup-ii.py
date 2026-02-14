@@ -25,6 +25,21 @@ class Solution:
     def cherryPickup(self, a: List[List[int]]) -> int:
         m, n = len(a), len(a[0])
         dp = [[[-1]*n for _ in range(n)] for _ in range(m)]
-        i, j1, j2 = 0, 0, len(a[0])-1
+        
+        for j1 in range(n):
+            for j2 in range(n):
+                dp[m-1][j1][j2] = a[m-1][j1] if j1==j2 else (a[m-1][j1] + a[m-1][j2])
 
-        return self.max_cherry(a, i, j1, j2, dp)    
+        for i in range(m-2, -1, -1):
+            for j1 in range(n):
+                for j2 in range(n):
+                    curr_state_gain = a[i][j1] + a[i][j2] if j1!=j2 else a[i][j1]
+                    nxt_state_max_gain = float('-inf')
+                    for dj1 in range(-1,2,1):
+                        for dj2 in range(-1,2,1):
+                            if (j1+dj1<0 or j1+dj1>=n) or (j2+dj2<0 or j2+dj2>=n):
+                                continue
+                            nxt_state_max_gain = max(nxt_state_max_gain, dp[i+1][j1+dj1][j2+dj2])
+                    dp[i][j1][j2] = curr_state_gain + nxt_state_max_gain                 
+
+        return dp[0][0][n-1]    
