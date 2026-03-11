@@ -7,25 +7,22 @@ class MyStack:
         self.q2 = deque() 
 
     def push(self, x: int) -> None:
-        self.q1.append(x) 
-        print(self.q1, len(self.q1))
+        while len(self.q1) != 0:
+            self.q2.append(self.q1.popleft())
+        
+        self.q1.append(x)
+
+        while len(self.q2) != 0:
+            self.q1.append(self.q2.popleft())
 
     def pop(self) -> int:
         if self.empty():
             return -1
 
-        while len(self.q1)!=1:
-            self.q2.append(self.q1.popleft())
-        
-        val = self.q1.popleft()
-        
-        while len(self.q2)!=0:
-            self.q1.append(self.q2.popleft())
-
-        return val
+        return self.q1.popleft()
 
     def top(self) -> int:
-        return self.q1[-1]
+        return self.q1[0]
 
     def empty(self) -> bool:
         return len(self.q1)==0
