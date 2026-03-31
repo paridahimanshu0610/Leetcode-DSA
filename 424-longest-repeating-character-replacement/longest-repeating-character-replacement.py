@@ -26,10 +26,9 @@ class Solution:
             if (j-i+1)-max_freq <= k:
                 res = max(res, j-i+1)
             else:
-                while (i < j) and ((j-i+1)-max_freq) > k:
-                    freq[s[i]] -= 1
-                    i += 1
-                    max_freq = max(freq.values())
+                freq[s[i]] -= 1
+                i += 1
+                max_freq = max(freq.values())
                 res = max(res, j-i+1)
             
             j+=1
