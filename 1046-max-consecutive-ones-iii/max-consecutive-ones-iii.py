@@ -7,14 +7,14 @@ class Solution:
             if a[r] == 0:
                 curr_zeros += 1
             
-            while l <= r and curr_zeros > k:
+            if curr_zeros > k:
                 if a[l] == 0:
                     curr_zeros -= 1
                 l += 1
 
             if curr_zeros <= k:
                 res = max(res, r-l+1)
-                
+
             r += 1
 
         return res
