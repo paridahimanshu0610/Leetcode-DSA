@@ -1,26 +1,19 @@
 class Solution:
-    def update_set(self, item, curr_set_freq):
-        curr_set_freq[item] = 1 if item not in curr_set_freq else curr_set_freq[item]+1
-
     def totalFruit(self, a: List[int]) -> int:
-        res = 1
-        curr_set_freq = {a[0]:1}
-        start, end = 0, 0
+        freq = {}
+        l, r = 0, 0
+        res = 0
 
-        while start <= end and end < len(a):
-            if len(curr_set_freq) > 2:
-                curr_set_freq[a[start]]-=1
-                if curr_set_freq[a[start]]==0:
-                    del curr_set_freq[a[start]]
-                start += 1
-            else:
-                res = max(res, end-start+1)
-            end += 1
-            if end < len(a):
-                self.update_set(a[end], curr_set_freq)
+        while l <= r and r < len(a):
+            freq[a[r]] = freq.get(a[r], 0) + 1
+
+            while len(freq) > 2 and l < r:
+                freq[a[l]] -= 1
+                if freq[a[l]]==0:
+                    del freq[a[l]]
+                l += 1
+            
+            res = max(res, r-l+1)
+            r += 1
 
         return res
-
-
-
-
