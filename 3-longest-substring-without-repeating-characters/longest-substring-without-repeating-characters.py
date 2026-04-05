@@ -1,19 +1,19 @@
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
-        start, end = 0, -1
-        char_idx = dict()
-        candidate = (start, end)
+        l, r = 0, 0
+        curr_set = set()
+        res = 0
 
-        for i in range(len(s)):
-            if s[i] in char_idx:
-                start = max(char_idx[s[i]]+1, start)
-        
-            char_idx[s[i]] = i
-            end = i
+        while l <= r and r < len(s):
+            if s[r] not in curr_set:
+                curr_set.add(s[r])
+                res = max(res, r-l+1)
+            else:
+                while s[l] != s[r]:
+                    curr_set.remove(s[l])
+                    l += 1
+                l += 1
             
-            # print(i, start, end, char_idx)
-            if (end-start) > (candidate[1]-candidate[0]):
-                candidate = (start, end)
-            # print(candidate)
+            r += 1
 
-        return candidate[1]-candidate[0]+1
+        return res
