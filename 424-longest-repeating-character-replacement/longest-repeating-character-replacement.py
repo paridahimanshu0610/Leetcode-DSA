@@ -1,36 +1,24 @@
 class Solution:
+    def get_highest_frequency(self, freq):
+        return sorted(freq.items(), key=lambda x:x[1], reverse=True)[0]
+
     def characterReplacement(self, s: str, k: int) -> int:
-        # res = 0
-
-        # for i in range(len(s)):
-        #     freq = dict()
-        #     freq[s[i]] = freq.get(s[i], 0)+1
-        #     max_freq = 1
-        #     for j in range(i+1, len(s)):
-        #         freq[s[j]] = freq.get(s[j], 0)+1
-        #         max_freq = max(max_freq, freq[s[j]])
-        #         if k >= (j-i+1)-max_freq:
-        #             res = max(res, j-i+1)
-        #         else:
-        #             break
-
+        l, r = 0, 0
         res = 0
         freq = {}
         max_freq = 0
-        i = 0
 
-        j = 0
-        while j < len(s):
-            freq[s[j]] = freq.get(s[j], 0)+1
-            max_freq = max(max_freq, freq[s[j]])
-            if (j-i+1)-max_freq <= k:
-                res = max(res, j-i+1)
+        while l <= r and r < len(s):
+            freq[s[r]] = freq.get(s[r], 0) + 1
+            item, f = self.get_highest_frequency(freq)
+            n = (r-l+1)
+            if (n-f) <= k:
+                res = max(res, n)
             else:
-                freq[s[i]] -= 1
-                i += 1
-                max_freq = max(freq.values())
-                res = max(res, j-i+1)
-            
-            j+=1
+                freq[s[l]] -= 1
+                if freq[s[l]]==0:
+                    del freq[s[l]]
+                l += 1
+            r += 1
 
-        return res
+        return res 
