@@ -5,13 +5,9 @@ class Solution:
         freq = {}
 
         while l <= r and r < len(s):
-            freq[s[r]] = freq.get(s[r], 0) + 1
-
-            while freq[s[r]] > 1:
-                freq[s[l]] -= 1
-                if freq[s[l]]==0:
-                    del freq[s[l]]
-                l += 1
+            if s[r] in freq and freq[s[r]] >= l:
+                l = freq[s[r]] + 1
+            freq[s[r]] = r
 
             res = max(res, r-l+1)
             r += 1
