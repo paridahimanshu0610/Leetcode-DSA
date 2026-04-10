@@ -10,7 +10,7 @@ class Solution:
             max_freq = max(freq.values())
             curr_window_len = r-l+1
 
-            while (curr_window_len - max_freq) > k:
+            if (curr_window_len - max_freq) > k:
                 freq[s[l]] -= 1
                 if freq[s[l]] == 0:
                     del freq[s[l]]
@@ -18,7 +18,9 @@ class Solution:
                 curr_window_len = r-l+1
                 max_freq = max(freq.values())
 
-            res = max(res, curr_window_len)
+            if (curr_window_len - max_freq) <= k:
+                res = max(res, curr_window_len)
+
             r += 1
 
         return res 
