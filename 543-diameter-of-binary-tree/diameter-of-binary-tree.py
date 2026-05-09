@@ -14,10 +14,7 @@ class Solution:
 
         depth = 1 + max(left, right)
 
-        left_dia = left if left-1 >= 0 else left
-        right_dia = right if right-1 >= 0 else right
-
-        return (depth, max(res, left_dia+right_dia))
+        return (depth, max(res, left+right))
 
     def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
         _, diameter = self.dfs(root, -1)
