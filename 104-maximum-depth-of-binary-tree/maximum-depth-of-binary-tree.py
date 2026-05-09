@@ -5,11 +5,14 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def getHeight(self, node, currDepth):
-        if node is None:
+    def getDepth(self, root, currDepth):
+        if root is None:
             return currDepth-1
-
-        return max(self.getHeight(node.left, currDepth+1), self.getHeight(node.right, currDepth+1))
-
+        
+        return max(self.getDepth(root.left, currDepth+1), self.getDepth(root.right, currDepth+1))
+        
     def maxDepth(self, root: Optional[TreeNode]) -> int:
-        return self.getHeight(root, 1)
+        if root is None:
+            return 0
+
+        return self.getDepth(root, 1)    
