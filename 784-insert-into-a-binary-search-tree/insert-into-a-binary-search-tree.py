@@ -9,14 +9,6 @@ class Solution:
         if root is None:
             return TreeNode(val)
 
-        if root.left is None and root.right is None:
-            if val > root.val: 
-                root.right = TreeNode(val)
-            else:
-                root.left = TreeNode(val)
-
-            return root
-
         if val < root.val:
             root.left = self.insertIntoBST(root.left, val)
         else:
