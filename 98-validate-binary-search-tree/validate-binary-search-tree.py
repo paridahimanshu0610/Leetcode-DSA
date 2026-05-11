@@ -5,20 +5,11 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def traverse(self, root, arr):
-        if root is None:
-            return
+    def inRange(self, node, lower, upper):
+        if node is None:
+            return True
 
-        self.traverse(root.left, arr)
-        arr.append(root.val)
-        self.traverse(root.right, arr)
+        return (lower < node.val < upper) and self.inRange(node.left, lower, node.val) and self.inRange(node.right, node.val, upper)
 
     def isValidBST(self, root: Optional[TreeNode]) -> bool:
-        arr = []
-        self.traverse(root, arr)
-
-        for i in range(len(arr)-1):
-            if arr[i] >= arr[i+1]:
-                return False
-
-        return True
+        return self.inRange(root, float("-inf"), float("inf"))
