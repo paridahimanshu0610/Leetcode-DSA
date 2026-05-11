@@ -6,19 +6,37 @@
 #         self.right = None
 
 class Solution:
+    def traverse(self, node, target, path):
+        if node is None:
+            return False
+        
+        path.append(node)
+
+        if node == target:
+            return True
+        
+        if self.traverse(node.left, target, path) or self.traverse(node.right, target, path):
+            return True
+        
+        path.pop()
+
+        return False
+
     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        if root is None:
-            return None
+        path1, path2 = [], []
+        self.traverse(root, p, path1)
+        self.traverse(root, q, path2)
 
-        if root == p or root == q:
-            return root
+        i, j = 1, 1
+        res = root
 
-        left = self.lowestCommonAncestor(root.left, p, q)
-        right = self.lowestCommonAncestor(root.right, p, q)
+        while i < len(path1) and j < len(path2):
+            if path1[i]==path2[j]:
+                res = path1[i]
+                i += 1
+                j += 1
+            else:
+                break
 
-        if left is None:
-            return right
-        elif right is None:
-            return left
-        else:
-            return root   
+        return res
+            
