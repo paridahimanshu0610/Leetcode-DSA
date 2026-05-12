@@ -12,6 +12,10 @@ class Solution:
         return dp[i][j] 
 
     def uniquePaths(self, m: int, n: int) -> int:
-        dp = [[-1]*n for _ in range(m)]
+        dp = [1]*n
 
-        return self.walk(m, n, m-1, n-1, dp)
+        for i in range(1, m):
+            for j in range(n):
+                dp[j] = dp[j] + dp[j-1]  if j-1 >= 0 else dp[j]
+
+        return dp[-1]
