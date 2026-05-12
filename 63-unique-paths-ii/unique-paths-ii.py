@@ -1,25 +1,25 @@
 class Solution:
-    def getTotalPaths(self, a, ii, jj, dp):
-        if ii == len(a)-1 and jj == len(a[0])-1:
-            dp[ii][jj] = 1 if a[ii][jj]==0 else 0
-            return dp[ii][jj]
-
-        if ii > len(a)-1 or jj > len(a[0])-1:
+    def walk(self, a, i, j, dp):
+        if i < 0 or j < 0:
             return 0
         
-        # If current cell itself is an obstacle
-        if a[ii][jj] == 1:
-            dp[ii][jj] = 0
-            return dp[ii][jj]
+        if a[i][j] == 1:
+            dp[i][j] = 0
+            return dp[i][j]
 
-        if dp[ii][jj]!=-1:
-            return dp[ii][jj]
+        if dp[i][j] != -1:
+            return dp[i][j]
 
-        dp[ii][jj] = self.getTotalPaths(a, ii+1, jj, dp) + self.getTotalPaths(a, ii, jj+1, dp)
+        dp[i][j] = self.walk(a, i-1, j, dp) + self.walk(a, i, j-1, dp)
 
-        return dp[ii][jj]
-             
+        return dp[i][j]
+
     def uniquePathsWithObstacles(self, a: List[List[int]]) -> int:
-        # dp[i][j] stores the total paths from current cell to the last cell (m-1, n-1)
-        dp = [[-1]*len(a[0]) for _ in range(len(a))]
-        return self.getTotalPaths(a, 0, 0, dp)
+        if a[0][0] == 1:
+            return 0
+        m, n = len(a), len(a[0])
+
+        dp = [[-1]*n for _ in range(m)]
+        dp[0][0] = 1
+
+        return self.walk(a, m-1, n-1, dp)
