@@ -22,11 +22,15 @@ class Solution:
 
     def minFallingPathSum(self, a: List[List[int]]) -> int:
         m, n = len(a), len(a[0])
-        dp = [[None]*n for _ in range(m)]
+        dp = [a[0][i] for i in range(n)]
 
-        mini = float('inf')
+        for i in range(1, m):
+            temp = [None]*n
+            for j in range(n):
+                topLeft = dp[j-1] if j-1 >= 0 else float('inf')
+                topRight = dp[j+1] if j+1 < n else float('inf')
+                top = dp[j]
+                temp[j] = a[i][j] + min(topLeft, top, topRight)
+            dp = temp
 
-        for i in range(n):
-            mini = min(mini, self.soFar(a, m-1, i, dp))
-
-        return mini
+        return min(dp)
