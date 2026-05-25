@@ -1,29 +1,32 @@
 class Solution:
-    def minSumFromCurrPt(self, a, ii, jj, dp):
-        if (ii==len(a)-1) and (0<=jj<len(a[0])):
-            dp[ii][jj] = a[ii][jj]
-            return dp[ii][jj]
-
-        if (ii>=len(a)) or (jj>=len(a[0])) or (jj<0):
-            return float('inf')
-
-        if dp[ii][jj]!=-1:
-            return dp[ii][jj]
+    def soFar(self, a, r, c, dp):
+        if r < 0 or c < 0 or c >= len(a[0]):
+            return float('inf') 
         
-        dp[ii][jj] = a[ii][jj] + min(self.minSumFromCurrPt(a, ii+1, jj, dp), self.minSumFromCurrPt(a, ii+1, jj+1, dp), self.minSumFromCurrPt(a, ii+1, jj-1, dp))
+        if r == 0:
+            dp[r][c] = a[r][c]
+            return dp[r][c]
 
-        return dp[ii][jj]
+        if dp[r][c] is not None:
+            return dp[r][c]
+
+        mini = float('inf')
+        for j in range(c-1, c+2):
+            mini = min(mini, self.soFar(a, r-1, j, dp))
+
+        mini = a[r][c] + mini
+        dp[r][c] = mini
+
+        return mini
+        
 
     def minFallingPathSum(self, a: List[List[int]]) -> int:
         m, n = len(a), len(a[0])
-        dp = [item for item in a[-1]]
+        dp = [[None]*n for _ in range(m)]
 
-        for ii in range(m-2, -1, -1):
-            bottom_left = float('inf')
-            for jj in range(n):
-                bottom = dp[jj]
-                bottom_right = dp[jj+1] if jj+1 < n else float('inf')
-                dp[jj] = a[ii][jj] + min(bottom, bottom_left, bottom_right)
-                bottom_left = bottom
-            
-        return min(dp) 
+        mini = float('inf')
+
+        for i in range(n):
+            mini = min(mini, self.soFar(a, m-1, i, dp))
+
+        return mini
