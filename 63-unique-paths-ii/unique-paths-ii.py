@@ -24,7 +24,19 @@ class Solution:
 
     def uniquePathsWithObstacles(self, a: List[List[int]]) -> int:
         m , n = len(a), len(a[0])
-        dp = [[None]*n for _ in range(m)]
+        dp = [0]*n
 
-        return self.soFar(a, m-1, n-1, dp)
+        for j in range(n):
+            if a[0][j] == 0:
+                dp[j] = 1
+            else:
+                break
         
+        for i in range(1, m):
+            for j in range(n):
+                if a[i][j] == 0:
+                    dp[j] = dp[j] + (dp[j-1] if j-1 >= 0 else 0)
+                else:
+                    dp[j] = 0
+
+        return dp[n-1]
