@@ -1,36 +1,30 @@
 class Solution:
-    def walk(self, a, i, j, dp):
-        if i < 0 or j < 0:
-            return 0
+    def soFar(self, a, r, c, dp):
+        if r == 0 and c == 0:
+            if a[r][c] == 0:
+                dp[r][c] = 1
+            else:
+                dp[r][c] = 0
+
+            return dp[r][c]
         
-        if a[i][j] == 1:
-            dp[i][j] = 0
-            return dp[i][j]
+        if r < 0 or c < 0:
+            return 0
 
-        if dp[i][j] != -1:
-            return dp[i][j]
+        if dp[r][c] != None:
+            return dp[r][c]
 
-        dp[i][j] = self.walk(a, i-1, j, dp) + self.walk(a, i, j-1, dp)
+        if a[r][c] == 1:
+            dp[r][c] = 0
+            return dp[r][c] 
 
-        return dp[i][j]
+        dp[r][c] = self.soFar(a, r-1, c, dp) + self.soFar(a, r, c-1, dp)
+
+        return dp[r][c] 
 
     def uniquePathsWithObstacles(self, a: List[List[int]]) -> int:
-        if a[0][0] == 1:
-            return 0
+        m , n = len(a), len(a[0])
+        dp = [[None]*n for _ in range(m)]
 
-        m, n = len(a), len(a[0])
-        dp = [0]*n
-
-        for i in range(n):
-            if a[0][i] == 1:
-                break
-            dp[i] = 1
+        return self.soFar(a, m-1, n-1, dp)
         
-        for i in range(1, m):
-            for j in range(n):
-                if a[i][j] == 1:
-                    dp[j] = 0
-                else:
-                    dp[j] = dp[j] + dp[j-1] if j-1 >= 0 else dp[j]
-        
-        return dp[-1]
