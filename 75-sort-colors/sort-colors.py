@@ -3,15 +3,26 @@ class Solution:
         """
         Do not return anything, modify nums in-place instead.
         """
-        idx0, idx1, idx2 = 0, 0, len(a)-1
+        n = len(a)
+        p1, p2 = 0, n-1
 
-        while idx1 <= idx2:
-            if a[idx1]==0:
-                a[idx1], a[idx0] = a[idx0], a[idx1]
-                idx1+=1
-                idx0+=1
-            elif a[idx1]==2:
-                a[idx2], a[idx1] = a[idx1], a[idx2]
-                idx2-=1
-            else:
-                idx1+=1
+        i = 0
+
+        while i <= p2:
+            if a[i] == 0:
+                a[p1] = 0
+                p1 += 1
+            elif a[i] == 2:
+                while p2 > i and a[p2] == 2:
+                    p2 -= 1
+                if a[p2] == 0:
+                    a[p1] = 0
+                    p1 += 1
+                a[p2] = 2
+                p2 -= 1
+
+            i += 1
+
+        while p1 <= p2:
+            a[p1] = 1
+            p1 += 1   
