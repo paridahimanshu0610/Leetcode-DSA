@@ -1,34 +1,34 @@
 class Solution:
-    def reverse(self, a, l, h):
-        while l <= h:
-            a[l], a[h] = a[h], a[l]
-            l += 1
-            h -= 1
+    def reverse(self, a, start, end):
+        k = 0
+        for ii in range(start, (start+end+1)//2):
+            a[ii], a[end-k] = a[end-k], a[ii]
+            k += 1 
 
     def nextPermutation(self, a: List[int]) -> None:
         """
         Do not return anything, modify nums in-place instead.
         """
         n = len(a)
-        j = n-1
+        if n == 1:
+            return
 
-        while j > 0:
-            if a[j-1] < a[j]:
-                break
+        i, j = n-2, n-1
+
+        while i >= 0 and j >= 0 and a[i] >= a[j]:
+            i -= 1
             j -= 1
-        
-        if j==0:
+
+        if i < 0:
             self.reverse(a, 0, n-1)
             return 
 
-        leftIdx = j
-        pivot = a[j-1]
-        j = n-1
+        ii = n-1
+        while ii > j:
+            if a[ii] > a[i]:
+                break
+            ii -= 1
 
-        while j >= leftIdx and a[j] <= pivot:
-            j -= 1
-        
-        a[leftIdx-1], a[j] = a[j], a[leftIdx-1]
+        a[i], a[ii] = a[ii], a[i]
 
-        self.reverse(a, leftIdx, n-1)
-        
+        self.reverse(a, j, n-1)
