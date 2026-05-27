@@ -27,12 +27,13 @@ class Solution:
         n = len(a)
 
         dp = [False]*(target+1)
-
+        dp[0] = True
         if a[0] <= target:
             dp[a[0]] = True
 
         for idx in range(1, n):
             temp = [None]*(target+1)
+            temp[0] = True
             for t1 in range(target+1):
                 take = False
                 # Take condition
