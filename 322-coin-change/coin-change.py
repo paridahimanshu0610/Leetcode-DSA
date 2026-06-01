@@ -1,34 +1,68 @@
 class Solution:
-    def total(self, a, idx, target, dp):
-        if target == 0:
-            return 0
-
+    def soFar(self, a, idx, k, dp):
+        if k == 0:
+            dp[idx][k] = 0
+            return dp[idx][k]
+        
         if idx == 0:
-            if target % a[idx] == 0:
-                return target // a[idx]
+            if k % a[idx] == 0:
+                dp[idx][k] = k // a[idx]
             else:
-                return float('inf')
+                dp[idx][k] = -1
+            return dp[idx][k]
+        
+        if dp[idx][k] is not None:
+            return dp[idx][k]
 
-        if dp[idx][target] != -1:
-            return dp[idx][target]
+        notTake = self.soFar(a, idx-1, k, dp)
 
-        # Take the coin
-        take = float('inf')
-        if target >= a[idx]:
-            take = 1 + self.total(a, idx, target - a[idx], dp)
+        take = -1
+        if a[idx] <= k:
+            temp = self.soFar(a, idx, k-a[idx], dp)
+            if temp >= 0: 
+                take = 1 + temp
+        
+        if take >=0 and notTake >= 0:
+            dp[idx][k] = min(take, notTake)
+        elif take >= 0:
+            dp[idx][k] = take
+        elif notTake >= 0:
+            dp[idx][k] = notTake
+        else:
+            dp[idx][k] = -1
 
-        # Do not take the coin
-        not_take = self.total(a, idx - 1, target, dp)
-
-        dp[idx][target] = min(take, not_take)
-
-        return dp[idx][target]
+        return dp[idx][k]
 
     def coinChange(self, a: List[int], target: int) -> int:
         n = len(a)
+        dp = [-1]*(target+1)
+        dp[0] = 0
 
-        dp = [[-1] * (target + 1) for _ in range(n)]
+        if a[0] <= target:
+            for k in range(1, target+1):
+                if k % a[0] == 0:
+                    dp[k] = k // a[0]
 
-        res = self.total(a, n - 1, target, dp)
+        for idx in range(1, n):
+            temp = [-1]*(target+1)
+            temp[0] = 0
+            for k in range(1, target+1):
+                notTake = dp[k]
 
-        return -1 if res == float('inf') else res
+                take = -1
+                if a[idx] <= k:
+                    temp0 = temp[k-a[idx]]
+                    if temp0 >= 0: 
+                        take = 1 + temp0
+                
+                if take >=0 and notTake >= 0:
+                    temp[k] = min(take, notTake)
+                elif take >= 0:
+                    temp[k] = take
+                elif notTake >= 0:
+                    temp[k] = notTake
+                else:
+                    temp[k] = -1
+            dp = temp
+
+        return dp[target] 
