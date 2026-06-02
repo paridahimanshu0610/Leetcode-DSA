@@ -25,6 +25,24 @@ class Solution:
 
     def change(self, target: int, a: List[int]) -> int:
         n = len(a)
-        dp = [[None]*(target+1) for _ in range(n)]
+        dp = [0]*(target+1)
+        dp[0] = 1
+        
+        if a[0] <= target:
+            for k in range(target+1):
+                if k % a[0] == 0:
+                    dp[k] = 1 
 
-        return self.soFar(a, n-1, target, dp)
+        for idx in range(1, n):
+            temp = [0]*(target+1)
+            temp[0] = 1
+            for k in range(target+1):          
+                notTake = dp[k]
+                take = 0
+                if a[idx] <= k:
+                    take = temp[k-a[idx]]
+                temp[k] = take + notTake
+
+            dp = temp
+
+        return dp[target]
