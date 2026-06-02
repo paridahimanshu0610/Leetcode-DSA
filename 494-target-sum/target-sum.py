@@ -23,26 +23,29 @@ class Solution:
 
     def findTargetSumWays(self, a: List[int], target: int) -> int:
         n = len(a)
-        dp = {}
         total = sum(a)
         lower, upper = target - total, target + total
+        dp = [0]*(2*total+1)
 
         for k in range(lower, upper+1):
             if (k == a[0]) or (k == -a[0]):
                 if k != 0:
-                    dp[k] = 1
+                    dp[k-lower] = 1
                 else:
-                    dp[k] = 2
+                    dp[k-lower] = 2
             else:
-                dp[k] = 0
+                dp[k-lower] = 0
 
         for idx in range(1, n):
-            temp = {}
+            temp = [0]*(2*total+1)
             for k in range(lower, upper+1):
-                plus = dp.get(k-a[idx], 0) 
-                minus = dp.get(k+a[idx], 0) 
+                plus, minus = 0, 0
+                if 0 <= k-a[idx]-lower <= 2*total:
+                    plus = dp[k-a[idx]-lower]
+                if 0 <= k+a[idx]-lower <= 2*total:  
+                    minus = dp[k+a[idx]-lower]
+                temp[k-lower] = plus + minus
 
-                temp[k] = plus + minus
             dp = temp
 
-        return dp[target]
+        return dp[target-lower]
