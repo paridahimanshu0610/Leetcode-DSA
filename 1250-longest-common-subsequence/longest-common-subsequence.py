@@ -1,19 +1,26 @@
 class Solution:
-    def match(self, s1, s2, i, j, dp):
-        if i < 0 or j < 0:
-            return 0
+    def soFar(self, s1, s2, idx1, idx2, dp):
+        if idx1 == 0:
+            dp[idx1][idx2] = 1 if (s1[idx1] in s2[:idx2+1]) else 0
+            return dp[idx1][idx2]
+        elif idx2 == 0:
+            dp[idx1][idx2] = 1 if (s2[idx2] in s1[:idx1+1]) else 0
+            return dp[idx1][idx2]  
         
-        if dp[i][j] != -1:
-            return dp[i][j]
+        if dp[idx1][idx2] is not None:
+            return dp[idx1][idx2] 
 
-        if s1[i] == s2[j]:
-            dp[i][j] = 1 + self.match(s1, s2, i-1, j-1, dp) 
+        if s1[idx1] == s2[idx2]:
+            res = 1 + self.soFar(s1, s2, idx1-1, idx2-1, dp)
         else:
-            dp[i][j] = max(self.match(s1, s2, i, j-1, dp), self.match(s1, s2, i-1, j, dp))
+            res = max(self.soFar(s1, s2, idx1, idx2-1, dp), self.soFar(s1, s2, idx1-1, idx2, dp))
 
-        return dp[i][j]
+        dp[idx1][idx2] = res
+
+        return dp[idx1][idx2]
 
     def longestCommonSubsequence(self, s1: str, s2: str) -> int:
-        dp = [[-1]*len(s2) for _ in range(len(s1))]
+        n, m = len(s1), len(s2)
+        dp = [[None]*m for _ in range(n)]
 
-        return self.match(s1, s2, len(s1)-1, len(s2)-1, dp)   
+        return self.soFar(s1, s2, n-1, m-1, dp)
