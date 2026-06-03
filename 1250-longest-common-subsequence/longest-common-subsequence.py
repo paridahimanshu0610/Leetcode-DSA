@@ -20,36 +20,29 @@ class Solution:
         return dp[idx1][idx2]
 
     def longestCommonSubsequence(self, s1: str, s2: str) -> int:
-        n, m = len(s1), len(s2)
-        dp = [[0]*m for _ in range(n)]
+        m, n = len(s1), len(s2)
+        dp = [0]*n
 
         idx2 = 0
-        while idx2 < m:
+        while idx2 < n:
             if s1[0] == s2[idx2]:
                 break
             idx2 += 1
 
-        while idx2 < m:
-            dp[0][idx2] = 1
+        while idx2 < n:
+            dp[idx2] = 1
             idx2 += 1
 
-        idx1 = 0
-        while idx1 < n:
-            if s2[0] == s1[idx1]:
-                break
-            idx1 += 1
-
-        while idx1 < n:
-            dp[idx1][0] = 1
-            idx1 += 1
-
-        for idx1 in range(1, n):
-            for idx2 in range(1, m):
+        for idx1 in range(1, m):
+            temp = [0]*n
+            for idx2 in range(n):
                 if s1[idx1] == s2[idx2]:
-                    res = 1 + dp[idx1-1][idx2-1]
+                    prevLength = dp[idx2-1] if idx2-1 >= 0 else 0
+                    res = 1 + prevLength
                 else:
-                    res = max(dp[idx1][idx2-1], dp[idx1-1][idx2])
+                    res = max(temp[idx2-1], dp[idx2])
 
-                dp[idx1][idx2] = res
+                temp[idx2] = res
+            dp = temp
 
-        return dp[n-1][m-1]
+        return dp[n-1]
