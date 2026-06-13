@@ -1,49 +1,23 @@
 class Solution:
-    def soFar(self, a, idx, t1, dp):
-        if idx == 0:
-            dp[idx][t1] = (t1 == a[0])
-            return dp[idx][t1]
-        
-        if dp[idx][t1] is not None:
-            return dp[idx][t1]
-
-        take = False
-        # Take condition
-        if a[idx] <= t1:
-            take = self.soFar(a, idx-1, t1-a[idx], dp)
-        
-        notTake = self.soFar(a, idx-1, t1, dp)
-
-        dp[idx][t1] = (take or notTake)
-
-        return dp[idx][t1] 
-
     def canPartition(self, a: List[int]) -> bool:
-        target = sum(a)
-        if target % 2 == 1:
+        total = sum(a)
+        if total % 2 == 1:
             return False
+        target0 = total // 2
 
-        target = target // 2
-        n = len(a)
-
-        dp = [False]*(target+1)
+        dp = [False]*(target0+1)
         dp[0] = True
-        if a[0] <= target:
-            dp[a[0]] = True
 
-        for idx in range(1, n):
-            temp = [None]*(target+1)
+        n = len(a)
+        for idx in range(1, n+1):
+            temp = [False]*(target0+1)
             temp[0] = True
-            for t1 in range(target+1):
+            for target in range(1, target0+1):
+                notTake = dp[target]
                 take = False
-                # Take condition
-                if a[idx] <= t1:
-                    take = dp[t1-a[idx]]
-                
-                notTake = dp[t1]
-
-                temp[t1] = (take or notTake)
-
+                if a[idx-1] <= target:
+                    take = dp[target-a[idx-1]]
+                temp[target] = (take or notTake)
             dp = temp
 
-        return dp[target]
+        return dp[target0]
