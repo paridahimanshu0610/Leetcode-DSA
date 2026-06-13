@@ -15,25 +15,16 @@ class Solution:
 
     def minDistance(self, s1: str, s2: str) -> int:
         m, n = len(s1), len(s2)
-        dp = [0]*n
+        dp = [0]*(n+1)
 
-        idx2 = 0
-        while idx2 < n:
-            if s1[0] == s2[idx2]:
-                break
-            idx2 += 1
-        while idx2 < n:
-            dp[idx2] = 1
-            idx2 += 1
-
-        for idx1 in range(1, m):
-            temp = [0]*n
-            for idx2 in range(n):
-                if s1[idx1] == s2[idx2]:
-                    temp[idx2] = (1 + dp[idx2-1]) if (idx2-1 >= 0) else 1
+        for idx1 in range(1, m+1):
+            temp = [0]*(n+1)
+            for idx2 in range(1, n+1):
+                if s1[idx1-1] == s2[idx2-1]:
+                    temp[idx2] = 1 + dp[idx2-1]
                 else:
-                    val = temp[idx2-1] if (idx2-1 >= 0) else 0 
-                    temp[idx2] = max(val, dp[idx2])
+                    temp[idx2] = max(temp[idx2-1], dp[idx2])
             dp = temp
+        seqLen = dp[n]
 
-        return (n-dp[n-1]) + (m-dp[n-1])
+        return (m - seqLen) + (n - seqLen)
