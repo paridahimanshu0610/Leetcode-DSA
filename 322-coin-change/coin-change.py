@@ -32,10 +32,19 @@ class Solution:
 
     def coinChange(self, a: List[int], amount: int) -> int:
         n = len(a)
-        dp = [[None]*(amount+1) for _ in range(n)]
+        dp = [-1]*(amount+1)
+        
+        for idx in range(1, n+1):
+            temp = [-1]*(amount+1)
+            temp[0] = 0
+            for k in range(1, amount+1):
+                notTake = dp[k]
+                take = -1
+                if a[idx-1] <= k:
+                    temp1, temp2 = temp[k-a[idx-1]], dp[k-a[idx-1]]
+                    minVal = self.compare(temp1, temp2)
+                    take = (1+minVal) if minVal >= 0 else -1
+                temp[k] = self.compare(take, notTake)
+            dp = temp
 
-        self.soFar(a, n-1, amount, dp)
-
-        res = dp[n-1][amount]
-
-        return res
+        return dp[amount]
