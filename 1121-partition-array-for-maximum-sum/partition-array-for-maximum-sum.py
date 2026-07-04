@@ -20,6 +20,18 @@ class Solution:
 
     def maxSumAfterPartitioning(self, a: List[int], k: int) -> int:
         n = len(a)
-        dp = [None] * n
+        dp = [None] * (n+1)
+        dp[n] = 0
 
-        return self.maxSum(a, 0, k, dp)
+        for l in range(n-1, -1, -1):
+            maxTotalSum = -float('inf')
+            maxi = -float('inf')
+            i = 0
+            while i < k and l+i < n:
+                maxi = max(maxi, a[l+i])
+                maxTotalSum = max(maxTotalSum, (i+1)*maxi + dp[l+i+1])
+                i += 1
+            dp[l] = maxTotalSum 
+
+        return dp[0]
+        
