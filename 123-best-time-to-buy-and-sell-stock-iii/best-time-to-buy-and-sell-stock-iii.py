@@ -19,8 +19,19 @@ class Solution:
 
     def maxProfit(self, a: List[int]) -> int:
         n = len(a)
-        dp = [[[None]*2 for _ in range(2)] for _ in range(n)]
-        cap = 1 # For the purpose of 0-index, instead of 2, I have taken 1
-        canBuy = 1
+        dp = [[0]*2 for _ in range(2)]
 
-        return self.fromHere(a, 0, cap, 1, dp)
+        for idx in range(n-1, -1, -1):
+            temp = [[0]*2 for _ in range(2)] 
+            for cap in range(2):
+                for canBuy in {0, 1}:
+                    if canBuy==1:
+                        res = max(-a[idx]+dp[cap][0], dp[cap][1])
+                    else:
+                        temp1 = dp[cap-1][1] if (cap-1>=0) else 0 
+                        res = max(a[idx]+temp1, dp[cap][0])
+                    temp[cap][canBuy] = res
+
+            dp = temp                    
+        
+        return dp[1][1]
