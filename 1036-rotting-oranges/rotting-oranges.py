@@ -1,51 +1,54 @@
-from collections import deque
-
 class Solution:
-    def checkAllRotten(self, grid):
-        m, n = len(grid), len(grid[0])
+    def spread(self, a, i, j, rotAt, currTime):
+        l, r, t, b = j-1, j+1, i-1, i+1
+        didSpread = False
+
+        if l >= 0 and a[i][l] == 1:
+            rotAt[i][l] = currTime+1 
+            a[i][l] = 2
+            didSpread = True
+
+        if t >= 0 and a[t][j] == 1:
+            rotAt[t][j] = currTime+1 
+            a[t][j] = 2
+            didSpread = True
+
+        if r < len(a[0]) and a[i][r] == 1:
+            rotAt[i][r] = currTime+1 
+            a[i][r] = 2
+            didSpread = True
+
+        if b < len(a) and a[b][j] == 1:
+            rotAt[b][j] = currTime+1 
+            a[b][j] = 2
+            didSpread = True
+
+        return didSpread
+
+    def orangesRotting(self, a: List[List[int]]) -> int:
+        m, n = len(a), len(a[0])
+        rotAt = [[0]*n for _ in range(m)]
+        currTime = 0
+        found = True
+        didSpread = True
+
+        while found and didSpread:
+
+            found = False
+            didSpread = False
+            for i in range(m):
+                for j in range(n):
+                    if a[i][j] == 2 and rotAt[i][j] == currTime:
+                        found = True
+                        if self.spread(a, i, j, rotAt, currTime):
+                            didSpread = True
+            
+            if found and didSpread:
+                currTime += 1
 
         for i in range(m):
             for j in range(n):
-                if grid[i][j] == 1:
-                    return False
-        
-        return True
+                if a[i][j] == 1:
+                    return -1
 
-    def inRange(self, i, j, m, n):
-        return (0 <= i < m) and (0 <= j < n)
-        
-    def orangesRotting(self, grid: List[List[int]]) -> int:
-        m, n = len(grid), len(grid[0])
-        visited = [[0]*n for _ in range(m)]
-        time = 0
-        dq = deque()
-
-        for i in range(m):
-            for j in range(n):
-                if grid[i][j] == 2:
-                    visited[i][j] = 1
-                    dq.appendleft((i, j))
-
-        time = 0
-        while len(dq) != 0:
-            curr_size = len(dq)
-            found_rotten_neighbours = False
-
-            # Oranges currently rotten
-            for _ in range(curr_size):
-                i, j = dq.pop()
-                neighbours = [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]
-                for x, y in neighbours:
-                    if self.inRange(x, y, m, n) and (grid[x][y] == 1) and (not visited[x][y]):
-                        found_rotten_neighbours = True
-                        dq.appendleft((x, y))
-                        grid[x][y] = 2    
-                        visited[x][y] = 1            
-
-            if found_rotten_neighbours:
-                time += 1
-
-        if self.checkAllRotten(grid):
-            return time
-        else:
-            return -1
+        return currTime
