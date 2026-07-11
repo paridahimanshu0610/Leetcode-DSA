@@ -13,7 +13,6 @@ class Solution:
                 totalProfit = self.fromThisDay(a, idx+1, 1, cooldownWait-1, maxCooldownWait, dp)
         else:
             totalProfit = max(a[idx] + self.fromThisDay(a, idx+1, 1, maxCooldownWait, maxCooldownWait, dp), self.fromThisDay(a, idx+1, 0, cooldownWait, maxCooldownWait, dp))
-        
 
         dp[idx][cooldownWait][toBuy] = totalProfit 
 
@@ -22,8 +21,23 @@ class Solution:
     def maxProfit(self, a: List[int]) -> int:
         n = len(a)
         maxCooldownWait = 1
-        dp = [[[None]*2 for _ in range(maxCooldownWait+1)] for _ in range(n)]
+        dp = [[0]*2 for _ in range(maxCooldownWait+1)]
 
-        idx, toBuy, cooldownWait = 0, 1, 0
+        for idx in range(n-1, -1, -1):
+            temp = [[None]*2 for _ in range(maxCooldownWait+1)]
 
-        return self.fromThisDay(a, idx, toBuy, cooldownWait, maxCooldownWait, dp)
+            for cooldownWait in range(maxCooldownWait+1):
+                for toBuy in range(2):
+                    if toBuy == 1:
+                        if cooldownWait == 0:
+                            totalProfit = max(-a[idx] + dp[0][0], dp[0][1])
+                        else:
+                            totalProfit = dp[cooldownWait-1][1]
+                    else:
+                        totalProfit = max(a[idx] + dp[maxCooldownWait][1], dp[cooldownWait][0])
+
+                    temp[cooldownWait][toBuy] = totalProfit
+
+            dp = temp
+
+        return dp[0][1]
