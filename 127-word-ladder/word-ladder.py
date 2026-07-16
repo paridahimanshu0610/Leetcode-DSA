@@ -21,25 +21,37 @@ class Solution:
         q = deque()
         n = len(wordList)
 
-        visited = [0]*n
+        wordSet = set(wordList)
 
-        for i in range(n):
-            if self.isUnitApart(beginWord, wordList[i]):
-                q.appendleft((wordList[i], 1))
-                visited[i] = 1
+        for char_idx in range(len(beginWord)):
+            for i in range(26):
+                if chr(97+i) == beginWord[char_idx]:
+                    continue
+
+                temp_word = beginWord[0:char_idx] + chr(97+i) + beginWord[char_idx+1:]
+
+                if (temp_word in wordSet):
+                    q.appendleft((temp_word, 1))
+                    wordSet.remove(temp_word)
         
         if len(q) == 0:
             return 0
-
+        
         while len(q)!=0:
             currWord, steps = q.pop()
 
             if currWord == endWord:
                 return steps+1
 
-            for i in range(n):
-                if (not visited[i]) and self.isUnitApart(currWord, wordList[i]):
-                    q.appendleft((wordList[i], steps+1))
-                    visited[i] = 1
+            for char_idx in range(len(currWord)):
+                for i in range(26):
+                    if chr(97+i) == currWord[char_idx]:
+                        continue
+
+                    temp_word = currWord[0:char_idx] + chr(97+i) + currWord[char_idx+1:]
+
+                    if (temp_word in wordSet):
+                        q.appendleft((temp_word, steps+1))
+                        wordSet.remove(temp_word)
 
         return 0
