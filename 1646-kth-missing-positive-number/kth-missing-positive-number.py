@@ -1,17 +1,19 @@
 class Solution:
     def findKthPositive(self, a: List[int], k: int) -> int:
-        missingCnt = 0
-        i, itr = 0, 1
+        n = len(a)
+        l, h = 0, n-1
 
-        while missingCnt < k and i < len(a):
-            if itr == a[i]:
-                i += 1
+        while l <= h:
+            mid = (l+h)//2
+            currMissing = a[mid] - (mid+1)
+
+            if currMissing >= k:
+                h = mid-1
             else:
-                missingCnt += 1
-
-            itr += 1
-
-        if missingCnt < k:
-            return a[-1] + (k-missingCnt) 
+                l = mid+1
+        
+        if h < 0:
+            return k
         else:
-            return itr-1
+            currMissing = a[h] - (h+1)
+            return a[h] + (k-currMissing)
