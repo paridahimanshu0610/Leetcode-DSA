@@ -1,38 +1,40 @@
 class Solution:
-    def getDays(self, a, cap):
-        daysTaken = 0
+    def days(self, a, shipCap):
+        cnt = 0
         currLoad = 0
-        i = 0
 
-        while i < len(a):
+        for i in range(len(a)):
             currLoad += a[i]
-            if currLoad > cap:
-                daysTaken += 1
-                currLoad = a[i]
-            elif currLoad == cap:
-                daysTaken += 1
+
+            if currLoad < shipCap:
+                continue
+            elif currLoad == shipCap:
+                cnt += 1
                 currLoad = 0
-            i += 1
-
+            else:
+                cnt += 1
+                currLoad = a[i]
+        
         if currLoad > 0:
-            daysTaken += 1
+            cnt += 1
+        
+        return cnt
 
-        return daysTaken
+    def shipWithinDays(self, a: List[int], targetDays: int) -> int:
+        l, h = float('-inf'), 0
 
-    def shipWithinDays(self, a: List[int], daysAvailable: int) -> int:
-        l, h = 0, 0
-
-        for e in a:
-            l = max(l, e)
-            h += e
+        for i in range(len(a)):
+            if a[i] > l:
+                l = a[i]
+            h += a[i]
 
         while l <= h:
             mid = (l+h)//2
-            daysRequired = self.getDays(a, mid)
+            currDaysTaken = self.days(a, mid)
 
-            if daysRequired <= daysAvailable:
+            if currDaysTaken <= targetDays:
                 h = mid-1
             else:
                 l = mid+1
-        
+
         return l
