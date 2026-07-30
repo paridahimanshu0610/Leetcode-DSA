@@ -14,7 +14,7 @@ class Solution:
         def isSafe(curr):
             visited[curr] = 1
 
-            if safeNode[i]:
+            if safeNode[curr]:
                 return True
 
             allSafe = True
