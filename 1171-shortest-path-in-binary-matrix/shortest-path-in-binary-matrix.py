@@ -9,30 +9,26 @@ class Solution:
         elif n==1 and a[0][0] == 0:
             return 1
 
-        dist = [[-1]*n for _ in range(n)]
+        visited = [[0]*n for _ in range(n)]
         q = deque()
 
-        q.appendleft(((0,0), 0))
-        dist[0][0] = 0
+        q.append(((0,0), 0))
+        visited[0][0] = 1
 
-        res = float('inf')
+        DIRS = [(1,0), (0,1), (-1,0), (0,-1), (-1,-1), (1,1), (-1,1), (1,-1)]
 
         while len(q) != 0:
-            (i,j), currDist = q.pop()
-            all_dirs = [(i+1,j), (i-1,j), (i,j+1), (i,j-1), (i-1,j-1), (i+1,j+1), (i-1,j+1), (i+1,j-1)]
+            (i,j), currDist = q.popleft()
 
-            for ii, jj in all_dirs:
-                if (0 <= ii < n) and (0 <= jj < n) and dist[ii][jj]==-1:
+            for di, dj in DIRS:
+                ii, jj = i+di, j+dj
+                if (0 <= ii < n) and (0 <= jj < n) and not visited[ii][jj]:
+                    visited[ii][jj] = 1
+
                     if a[ii][jj] == 0:
-                        # print(f"For (i,j) = ({i},{j}):", ((ii,jj), currDist+1))
-                        q.appendleft(((ii,jj), currDist+1))
-                        dist[ii][jj] = currDist+1
-                        res = min(res, currDist+1) if (ii==n-1 and jj==n-1) else res
-                    else:
-                        dist[ii][jj] = float('inf')
+                        q.append(((ii,jj), currDist+1))
+                    
+                    if ii==n-1 and jj==n-1:
+                        return currDist+2
 
-        if res == float("inf"):
-            return -1
-        else:
-            return res+1
-                        
+        return -1
