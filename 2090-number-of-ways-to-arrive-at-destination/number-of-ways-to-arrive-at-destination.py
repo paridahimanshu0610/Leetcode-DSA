@@ -7,32 +7,29 @@ class Solution:
         for u,v,time in roads:
             adj[u].append((v,time))
             adj[v].append((u,time))
-        
+
+        numWays = [0]*n
+        minDist = [float('inf')]*n
+
         minHeap = []
-        heapq.heappush(minHeap, (0,0)) # dist from 0, node
-        
-        res = [(float('inf'))]*n
-        ways = [0]*n
-        res[0] = 0
-        ways[0] = 1
- 
-        while len(minHeap)!=0:
-            currTime, node = heapq.heappop(minHeap)
+        heapq.heappush(minHeap, (0,0)) # Distance, node
+        numWays[0] = 1
+        minDist[0] = 0
 
-            if currTime > res[node]:
+        while len(minHeap) != 0:
+            currDist, node = heapq.heappop(minHeap)
+
+            if currDist > minDist[node]:
                 continue
 
-            if node == n-1:
-                continue
-            
             for nv,time in adj[node]:
-                tempTime = currTime+time            
-                
-                if (tempTime < res[nv]):
-                    res[nv] = tempTime
-                    ways[nv] = ways[node]
-                    heapq.heappush(minHeap, (tempTime,nv))
-                elif (tempTime == res[nv]):
-                    ways[nv] = ways[nv]+ways[node]               
+                tempDist = currDist+time
 
-        return ways[n-1] % (10**9 + 7)
+                if tempDist < minDist[nv]:
+                    minDist[nv] = tempDist
+                    numWays[nv] = numWays[node]
+                    heapq.heappush(minHeap, (tempDist,nv))
+                elif tempDist == minDist[nv]:
+                    numWays[nv] = numWays[nv] + numWays[node]
+
+        return numWays[n-1] % (10**9 + 7)
