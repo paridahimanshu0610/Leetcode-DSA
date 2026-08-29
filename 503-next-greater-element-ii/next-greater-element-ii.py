@@ -5,12 +5,16 @@ class Solution:
         res = [None]*n
 
         for i in range(2*n-1, -1, -1):
-            ii = i % n
-
-            while len(stack) > 0 and stack[-1] <= a[ii]:
+            curr_i = i % n
+            while len(stack) > 0 and stack[-1] <= a[curr_i]:
                 stack.pop()
-            if i < n:
-                res[ii] = stack[-1] if len(stack) > 0 else -1
-            stack.append(a[ii])
+
+            if i < n:    
+                if len(stack) > 0:
+                    res[i] = stack[-1] # Here, curr_i = i
+                else:
+                    res[i] = -1
+
+            stack.append(a[curr_i])
 
         return res
