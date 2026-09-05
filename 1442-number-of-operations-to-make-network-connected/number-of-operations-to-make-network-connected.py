@@ -30,9 +30,9 @@ class Solution:
 
             unionBySize(u,v)
         
+        distinct_parents = 0
         for i in range(n):
-            findUltimateParent(i)
-            
-        distinct_parents = set(parent)
+            if parent[i]==i:
+                distinct_parents += 1
 
-        return len(distinct_parents)-1 if len(distinct_parents)-1 <= spare else -1   
+        return distinct_parents-1 if distinct_parents-1 <= spare else -1   
