@@ -3,20 +3,18 @@ class Solution:
         edges = []
         n = len(a)
 
-        for i in range(n):
-            x0, y0 = a[i]
-            for j in range(i+1, n):
-                x1, y1 = a[j]
-                if x0==x1 or y0==y1:
-                    edges.append([i,j])
-
-        parent = [i for i in range(n)]
-        size = [1 for i in range(n)]
+        parent = {}
+        size = {}
 
         def findUltimateParent(node):
-            if node == parent[node]:
+            if parent.get(node, None) is None:
+                parent[node] = node
                 return node
+            elif parent[node] == node:
+                return node
+
             parent[node] = findUltimateParent(parent[node])
+
             return parent[node]
 
         def shareSameParent(u,v):
@@ -25,22 +23,25 @@ class Solution:
         def unionBySize(u, v):
             pu, pv = findUltimateParent(u), findUltimateParent(v)
 
-            if size[pu] < size[pv]:
+            if size.get(pu,1) < size.get(pv,1):
                 parent[pu] = pv
-                size[pv] += size[pu]
+                if pv in size:
+                    size[pv] += size.get(pu,1)
+                else:
+                    size[pv] = 1+size.get(pu,1)                    
             else:
                 parent[pv] = pu
-                size[pu] += size[pv]
+                if pu in size:
+                    size[pu] += size.get(pv,1)
+                else:
+                    size[pu] = 1+size.get(pv,1)  
 
-        for u,v in edges:
-            if shareSameParent(u,v):
+        for x,y in a:
+            if shareSameParent(x, ~y):
                 continue
 
-            unionBySize(u,v)
+            unionBySize(x, ~y)
 
-        res = 0
-        for i in range(n):
-            if i != parent[i]:
-                res += 1
+        unique_parents = {findUltimateParent(node) for node in parent.keys()}
 
-        return res
+        return n-len(unique_parents)
