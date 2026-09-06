@@ -1,47 +1,41 @@
 class Solution:
-    def removeStones(self, a: List[List[int]]) -> int:
-        edges = []
-        n = len(a)
+    def removeStones(self, stones: List[List[int]]) -> int:
+        n = len(stones)
+        graph = defaultdict(list)
 
-        parent = {}
-        size = {}
+        row_groups = defaultdict(list)
+        col_groups = defaultdict(list)
 
-        def findUltimateParent(node):
-            if parent.get(node, None) is None:
-                parent[node] = node
-                return node
-            elif parent[node] == node:
-                return node
+        for i, (x, y) in enumerate(stones):
+            row_groups[x].append(i)
+            col_groups[y].append(i)
 
-            parent[node] = findUltimateParent(parent[node])
+        # Chain stones sharing the same row
+        for group in row_groups.values():
+            for i in range(len(group) - 1):
+                u, v = group[i], group[i+1]
+                graph[u].append(v)
+                graph[v].append(u)
 
-            return parent[node]
+        # Chain stones sharing the same column
+        for group in col_groups.values():
+            for i in range(len(group) - 1):
+                u, v = group[i], group[i+1]
+                graph[u].append(v)
+                graph[v].append(u)
 
-        def shareSameParent(u,v):
-            return findUltimateParent(u) == findUltimateParent(v)
+        visited = [False] * n
 
-        def unionBySize(u, v):
-            pu, pv = findUltimateParent(u), findUltimateParent(v)
+        def dfs(node):
+            visited[node] = True
+            for nei in graph[node]:
+                if not visited[nei]:
+                    dfs(nei)
 
-            if size.get(pu,1) < size.get(pv,1):
-                parent[pu] = pv
-                if pv in size:
-                    size[pv] += size.get(pu,1)
-                else:
-                    size[pv] = 1+size.get(pu,1)                    
-            else:
-                parent[pv] = pu
-                if pu in size:
-                    size[pu] += size.get(pv,1)
-                else:
-                    size[pu] = 1+size.get(pv,1)  
+        components = 0
+        for i in range(n):
+            if not visited[i]:
+                dfs(i)
+                components += 1
 
-        for x,y in a:
-            if shareSameParent(x, ~y):
-                continue
-
-            unionBySize(x, ~y)
-
-        unique_parents = {findUltimateParent(node) for node in parent.keys()}
-
-        return n-len(unique_parents)
+        return n - components
