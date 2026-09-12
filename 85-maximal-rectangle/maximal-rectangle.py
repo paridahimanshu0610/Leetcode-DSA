@@ -1,62 +1,45 @@
 class Solution:
-    def nextSmallerEle(self, a):
+    def maxRectangleHistogram(self, a: List[int]) -> int:
         n = len(a)
-        res = [None] * n
-        stack = []
+        wrange = [[None, None] for _ in range(n)]
 
+        stack = []  
         for i in range(n):
-            if (len(stack) == 0) or (a[i] >= a[stack[-1]]):
-                stack.append(i)
-            else:
-                while len(stack) > 0 and a[stack[-1]] > a[i]:
-                    res[stack[-1]] = i  # a[i]
-                    stack.pop()
-                stack.append(i)
+            while len(stack) > 0 and a[i] < stack[-1][0]:
+                _, idx = stack.pop()
+                wrange[idx][1] = i-1
+            stack.append([a[i], i])
 
         while len(stack) > 0:
-            res[stack[-1]] = n
-            stack.pop()
+            _, idx = stack.pop()
+            wrange[idx][1] = n-1    
 
-        return res
-
-    def prevSmallerEle(self, a):
-        n = len(a)
-        res = [None] * n
-        stack = []
-
-        for i in range(n - 1, -1, -1):
-            if len(stack) == 0 or a[i] >= a[stack[-1]]:
-                stack.append(i)
-            else:
-                while len(stack) != 0 and a[stack[-1]] > a[i]:
-                    res[stack[-1]] = i  # a[i]
-                    stack.pop()
-                stack.append(i)
+        stack = []  
+        for i in range(n-1, -1, -1):
+            while len(stack) > 0 and a[i] < stack[-1][0]:
+                _, idx = stack.pop()
+                wrange[idx][0] = i+1
+            stack.append([a[i], i])
 
         while len(stack) > 0:
-            res[stack[-1]] = -1
-            stack.pop()
+            _, idx = stack.pop()
+            wrange[idx][0] = 0
 
-        return res
-
-    def largestRectangleArea(self, a: List[int]) -> int:
-        pse, nse = self.prevSmallerEle(a), self.nextSmallerEle(a)
-
-        n = len(a)
-        res = -float("inf")
-
+        res = -1
         for i in range(n):
-            res = max(res, (nse[i] - pse[i] - 1) * a[i])
+            res = max(res, (wrange[i][1] - wrange[i][0] + 1)*a[i])
 
         return res
 
     def maximalRectangle(self, a: List[List[str]]) -> int:
         m, n = len(a), len(a[0])
+
         hist = [0]*n
-        res = -float('inf')
+        res = -1
 
         for i in range(m):
-            hist = [(hist[j] + 1) if (a[i][j]=="1") else 0 for j in range(n)]   
-            res = max(res, self.largestRectangleArea(hist))
+            for j in range(n):
+                hist[j] = (hist[j]+1) if a[i][j]=="1" else 0
+            res = max(res, self.maxRectangleHistogram(hist))
 
         return res
