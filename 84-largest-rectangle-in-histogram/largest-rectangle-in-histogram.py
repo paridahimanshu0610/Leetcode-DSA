@@ -1,51 +1,34 @@
 class Solution:
-    def nextSmallerEle(self, a):
-        n = len(a)
-        res = [None] * n
-        stack = []
-
-        for i in range(n):
-            if (len(stack) == 0) or (a[i] >= a[stack[-1]]):
-                stack.append(i)
-            else:
-                while len(stack) > 0 and a[stack[-1]] > a[i]:
-                    res[stack[-1]] = i  # a[i]
-                    stack.pop()
-                stack.append(i)
-
-        while len(stack) > 0:
-            res[stack[-1]] = n
-            stack.pop()
-
-        return res
-
-    def prevSmallerEle(self, a):
-        n = len(a)
-        res = [None] * n
-        stack = []
-
-        for i in range(n - 1, -1, -1):
-            if len(stack) == 0 or a[i] >= a[stack[-1]]:
-                stack.append(i)
-            else:
-                while len(stack) != 0 and a[stack[-1]] > a[i]:
-                    res[stack[-1]] = i  # a[i]
-                    stack.pop()
-                stack.append(i)
-
-        while len(stack) > 0:
-            res[stack[-1]] = -1
-            stack.pop()
-
-        return res
-
     def largestRectangleArea(self, a: List[int]) -> int:
-        pse, nse = self.prevSmallerEle(a), self.nextSmallerEle(a)
-
         n = len(a)
-        res = -float("inf")
+        wrange = [[None, None] for _ in range(n)]
 
+        stack = []
         for i in range(n):
-            res = max(res, (nse[i] - pse[i] - 1) * a[i])
+            while len(stack) > 0 and a[i] < stack[-1][0]:
+                _, idx = stack.pop()
+                wrange[idx][1] = i-1
+            
+            stack.append([a[i], i])
+        
+        while len(stack) > 0:
+            _, idx = stack.pop()
+            wrange[idx][1] = n-1
+
+        stack = []
+        for i in range(n-1, -1, -1):
+            while len(stack) > 0 and a[i] < stack[-1][0]:
+                _, idx = stack.pop()
+                wrange[idx][0] = i+1
+            
+            stack.append([a[i], i])
+
+        while len(stack) > 0:
+            _, idx = stack.pop()
+            wrange[idx][0] = 0
+        
+        res = -1
+        for i in range(n):
+            res = max((wrange[i][1] - wrange[i][0] + 1)*a[i], res)
 
         return res
