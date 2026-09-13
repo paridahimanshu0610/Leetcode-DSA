@@ -1,33 +1,28 @@
-import heapq
-
 class Solution:
-    def swimInWater(self, a: List[List[int]]) -> int:
-        n = len(a)
-        dist = [[float("inf")]*n for _ in range(n)]
-        dist[0][0] = a[0][0]
-
-        minHeap = []
-        heapq.heappush(minHeap, (a[0][0], 0, 0))
-
-        dx = [0, 0, 1, -1]
-        dy = [1, -1, 0, 0]
-
-        while len(minHeap) != 0:
-            currTime, x, y = heapq.heappop(minHeap)
-
-            if currTime > dist[x][y]:
-                continue
-            
-            for i in range(4):
-                nx = x+dx[i]
-                ny = y+dy[i]
-
-                if (nx < 0 or nx >= n) or (ny < 0 or ny >= n):
-                    continue
-                
-                timeTaken = max(currTime, a[nx][ny])
-                if timeTaken < dist[nx][ny]:
-                    dist[nx][ny] = timeTaken
-                    heapq.heappush(minHeap, (timeTaken, nx, ny))
-
-        return dist[n-1][n-1]
+    def swimInWater(self, grid: List[List[int]]) -> int:
+        m, n = len(grid), len(grid[0])
+        edges = []
+        for i in range(m):
+            for j in range(n):
+                if i > 0:
+                    edges.append((max(grid[i][j], grid[i-1][j]), i*n+j, (i-1)*n+j))
+                if j > 0:
+                    edges.append((max(grid[i][j], grid[i][j-1]), i*n+j, i*n+j-1))
+        
+        edges.sort()
+        parent = list(range(m * n))
+        
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+        
+        def union(x, y):
+            parent[find(x)] = find(y)
+        
+        for cost, u, v in edges:
+            union(u, v)
+            if find(0) == find(m*n-1):
+                return cost
+        
+        return grid[0][0]
