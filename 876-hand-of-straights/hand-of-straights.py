@@ -9,12 +9,11 @@ class Solution:
         k = n//size
 
         temp = {}
-        hp = []
         for e in a:
             temp[e] = 1 if e not in temp else temp[e]+1
-
-        for key in temp.keys():
-            heapq.heappush(hp, key)
+            
+        hp = list(temp.keys())
+        heapq.heapify(hp)
 
         def decr(key):
             temp[key] -= 1
@@ -28,7 +27,7 @@ class Solution:
             decr(min_e)
             if min_e in temp:
                 heapq.heappush(hp, min_e)
-                
+
             next_e = min_e+1
             for j in range(size-1):
                 if next_e not in temp:
