@@ -12,10 +12,9 @@ class Twitter:
         self.user_tweets[userId].append((self.curr_id, tweetId))
 
     def getNewsFeed(self, userId: int) -> list[int]:
-        all_tweets = self.user_tweets[userId].copy()
-
-        for followee in self.user_follow[userId]:
-            all_tweets.extend(self.user_tweets[followee])
+        all_tweets = []
+        for id in self.user_follow[userId] | {userId}:
+            all_tweets.extend(self.user_tweets[id][-10:])
         
         heapq.heapify(all_tweets)
 
@@ -29,8 +28,7 @@ class Twitter:
         self.user_follow[followerId].add(followeeId)
 
     def unfollow(self, followerId: int, followeeId: int) -> None:
-        if followeeId in self.user_follow[followerId]:
-            self.user_follow[followerId].discard(followeeId)
+        self.user_follow[followerId].discard(followeeId)
 
 # Your Twitter object will be instantiated and called as such:
 # obj = Twitter()
