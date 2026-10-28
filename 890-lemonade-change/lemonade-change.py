@@ -1,21 +1,45 @@
 class Solution:
-    def lemonadeChange(self, a: List[int]) -> bool:
-        change = {5:0, 10:0}
+    def lemonadeChange(self, bills: list[int]) -> bool:
+        count = {5:0, 10:0, 20:0}
 
-        for i in range(len(a)):
-            if a[i]==5:
-                change[5]+=1
-            elif a[i]==10:
-                change[5]-=1
-                change[10]+=1
-            else:
-                if change[10]==0:
-                    change[5]-=3
-                else:
-                    change[5]-=1
-                    change[10]-=1
-            
-            if change[5]<0 or change[10]<0:
+        for bill in bills:
+            count[bill] += 1
+            left = bill-5
+
+            cnt20 = min(left//20, count[20])
+            left -= cnt20*20
+            count[20] -= cnt20
+            # cnt20 = left//20 
+            # if cnt20 > count[20]:
+            #     left = left - count[20]*20
+            #     count[20] = 0
+            # else:
+            #     left = left - cnt20*20
+            #     count[20] -= cnt20
+
+            cnt10 = min(left//10, count[10])
+            left -= cnt10*10
+            count[10] -= cnt10
+            # cnt10 = left//10
+            # if cnt10 > count[10]:
+            #     left = left - count[10]*10
+            #     count[10] = 0
+            # else:
+            #     left = left - cnt10*10
+            #     count[10] -= cnt10
+
+            cnt5 = min(left//5, count[5])
+            left -= cnt5*5
+            count[5] -= cnt5
+            # cnt5 = left//5
+            # if cnt5 > count[5]:
+            #     left = left - count[5]*5
+            #     count[5] = 0
+            # else:
+            #     left = left - cnt5*5
+            #     count[5] -= cnt5
+
+            if left > 0:
                 return False
 
         return True
