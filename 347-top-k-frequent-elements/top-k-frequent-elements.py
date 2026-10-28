@@ -1,20 +1,18 @@
 import heapq
+from collections import Counter
 
 class Solution:
     def topKFrequent(self, a: list[int], k: int) -> list[int]:
-        freq = {}
-        for e in a:
-            if e not in freq:
-                freq[e] = -1
-            else:
-                freq[e] -= 1
-        
-        heap = [(val, key) for key, val in freq.items()]
-        heapq.heapify(heap)
+        # TC: O(n), SC: O(m+k) -> O(m) since k <= m
+        freq = Counter(a)
+        heap = []
 
-        res = []
+        # TC: O(m log(k))
+        for key, val in freq.items():
+            if len(heap) < k:
+                heapq.heappush(heap, (val, key))
+            elif val > heap[0][0]:
+                heapq.heappop(heap)
+                heapq.heappush(heap, (val, key))
 
-        for _ in range(k):
-            res.append(heapq.heappop(heap)[1])
-
-        return res
+        return [item[1] for item in heap]
