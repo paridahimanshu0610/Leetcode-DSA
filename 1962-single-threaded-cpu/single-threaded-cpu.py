@@ -1,32 +1,26 @@
-import heapq as hq
+import heapq
+
 class Solution:
-    def getOrder(self, a: List[List[int]]) -> List[int]:
-        for i in range(len(a)):
-            a[i] = [i] + a[i]
-        a.sort(key = lambda x: (x[1], x[2]))
-        task_heap = []
-        hq.heapify(task_heap)
+    def getOrder(self, a: list[list[int]]) -> list[int]:
+        n = len(a)
+        b = [a[i]+[i] for i in range(n)]
+        b.sort()
 
-        curr_time = a[0][1]
+        currTime = 1
+        i = 0
+        queue = []
         res = []
-        curr_task = 0
 
-        while curr_task < len(a):
-            # Pushing all currently available tasks onto the heap
-            while curr_task < len(a) and a[curr_task][1] <= curr_time:
-                hq.heappush(task_heap, [a[curr_task][2], a[curr_task][0]])
-                curr_task += 1
+        while len(res) < n:
+            while i < n and currTime >= b[i][0]:
+                heapq.heappush(queue, (b[i][1], b[i][2], b[i][0]))
+                i += 1
             
-            if len(task_heap) > 0:
-                process_time, idx = hq.heappop(task_heap)
+            if len(queue) > 0:
+                pTime, idx, _ = heapq.heappop(queue)
+                currTime += pTime
                 res.append(idx)
-                curr_time += process_time
             else:
-                if curr_task < len(a):
-                    curr_time = a[curr_task][1]
+                currTime = b[i][0]
 
-        while len(task_heap) > 0:
-            _, idx = hq.heappop(task_heap)
-            res.append(idx)            
-        
         return res
