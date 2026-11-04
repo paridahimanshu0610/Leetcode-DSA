@@ -1,25 +1,21 @@
 class Solution:
     def insert(self, intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
-        currCheckInterval = newInterval
+        i = 0
+        n = len(intervals)
+        res = []
 
-        def overlap(interval, refInterval):
-            return ((refInterval[0] <= interval[1]) and (refInterval[1] >= interval[1])) or ((refInterval[1] >= interval[0]) and (refInterval[0] <= interval[0])) or ((refInterval[0] >= interval[0]) and (refInterval[1] <= interval[1]))
+        while i < n and intervals[i][1] < newInterval[0]:
+            res.append(intervals[i])
+            i += 1
 
-        startIdx, endIdx = -1, -1
+        while i < n and newInterval[1] >= intervals[i][0]:
+            newInterval = [min(newInterval[0], intervals[i][0]), max(newInterval[1], intervals[i][1])]
+            i += 1
 
-        for i in range(len(intervals)):
-            if overlap(intervals[i], currCheckInterval):
-                currCheckInterval = [min(intervals[i][0], currCheckInterval[0]), max(intervals[i][1], currCheckInterval[1])]
-                startIdx = i if startIdx == -1 else startIdx
-            elif currCheckInterval[1] < intervals[i][0]:
-                endIdx = i
-                break 
-        
-        if startIdx != -1 and endIdx != -1:
-            return intervals[:startIdx] + [currCheckInterval] + intervals[endIdx:] 
-        elif startIdx != -1 and endIdx == -1:
-            return intervals[:startIdx] + [currCheckInterval] 
-        elif startIdx == -1 and endIdx != -1:
-            return intervals[:endIdx] + [currCheckInterval] + intervals[endIdx:]
-        else:
-            return intervals + [currCheckInterval]
+        res.append(newInterval)
+
+        while i < n:
+            res.append(intervals[i])
+            i += 1
+
+        return res
