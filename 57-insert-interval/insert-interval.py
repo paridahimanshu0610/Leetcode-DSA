@@ -1,28 +1,25 @@
 class Solution:
-    def insert(self, a: List[List[int]], new_i: List[int]) -> List[List[int]]:
-        i, n = 0, len(a)
+    def insert(self, intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
+        currCheckInterval = newInterval
 
-        while i < n and a[i][1] < new_i[0]:
-            i += 1
+        def overlap(interval, refInterval):
+            return ((refInterval[0] <= interval[1]) and (refInterval[1] >= interval[1])) or ((refInterval[1] >= interval[0]) and (refInterval[0] <= interval[0])) or ((refInterval[0] >= interval[0]) and (refInterval[1] <= interval[1]))
 
-        if i == n:
-            return a + [new_i]
-        elif i == 0 and new_i[1] < a[i][0]:
-            return [new_i] + a
-        elif new_i[1] < a[i][0]:
-            return a[0:i] + [new_i] + a[i:] 
+        startIdx, endIdx = -1, -1
+
+        for i in range(len(intervals)):
+            if overlap(intervals[i], currCheckInterval):
+                currCheckInterval = [min(intervals[i][0], currCheckInterval[0]), max(intervals[i][1], currCheckInterval[1])]
+                startIdx = i if startIdx == -1 else startIdx
+            elif currCheckInterval[1] < intervals[i][0]:
+                endIdx = i
+                break 
         
-        res = a[0:i]
-        curr = [min(a[i][0], new_i[0]), max(a[i][1], new_i[1])]
-
-        for j in range(i, n):
-            temp = a[j]
-            if curr[1] < temp[0]:
-                res.append(curr)
-                curr = temp
-            else:
-                curr = [min(curr[0], temp[0]), max(curr[1], temp[1])]
-
-        res.append(curr)
-
-        return res
+        if startIdx != -1 and endIdx != -1:
+            return intervals[:startIdx] + [currCheckInterval] + intervals[endIdx:] 
+        elif startIdx != -1 and endIdx == -1:
+            return intervals[:startIdx] + [currCheckInterval] 
+        elif startIdx == -1 and endIdx != -1:
+            return intervals[:endIdx] + [currCheckInterval] + intervals[endIdx:]
+        else:
+            return intervals + [currCheckInterval]
