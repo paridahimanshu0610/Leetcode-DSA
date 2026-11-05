@@ -1,27 +1,20 @@
 class Solution:
-    def candy(self, a: List[int]) -> int:
-        i, n = 1, len(a)
-        res = 1
+    def candy(self, a: list[int]) -> int:
+        n = len(a)
+        left = [1]*n
+        right = [1]*n
+        res = 0
 
-        while i < n:
-            if a[i] == a[i-1]:
-                res += 1
-                i += 1
-                continue
-            
-            peak = 1
-            while (i < n and a[i] > a[i-1]):
-                peak += 1
-                res += peak
-                i += 1
-            
-            down = 1
-            while (i < n and a[i-1] > a[i]):
-                res += down
-                i += 1
-                down += 1
-            
-            if down > peak:
-                res += (down-peak)
+        for i in range(1, n):
+            if a[i] > a[i-1]:
+                left[i] += left[i-1]
 
+        res = max(left[n-1], right[n-1])
+
+        for i in range(n-2, -1, -1):
+            if a[i] > a[i+1]:
+                right[i] += right[i+1]
+
+            res += max(left[i], right[i])
+        
         return res
