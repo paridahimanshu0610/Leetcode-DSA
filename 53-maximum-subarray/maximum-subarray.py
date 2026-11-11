@@ -1,9 +1,14 @@
 class Solution:
-    def maxSubArray(self, a: List[int]) -> int:
-        currMax, globalMax = -float('inf'), -float('inf')
+    def maxSubArray(self, a: list[int]) -> int:
+        res = -float("inf")
+        prevSum = 0
 
         for i in range(len(a)):
-            currMax = max(currMax + a[i], a[i])
-            globalMax = max(currMax, globalMax)
+            if prevSum + a[i] > a[i]:
+                prevSum = prevSum + a[i]
+            else:
+                prevSum = a[i]
 
-        return globalMax
+            res = max(res, prevSum)
+
+        return res 
