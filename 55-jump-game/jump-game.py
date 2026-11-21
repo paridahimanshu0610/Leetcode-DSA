@@ -1,12 +1,16 @@
 class Solution:
     def canJump(self, a: list[int]) -> bool:
+        maxReachIdx = 0
         n = len(a)
-        j = min(a[0], n-1) # Current maximum reachable index
 
-        for i in range(1, n):
-            if i <= j:
-                j = max(j, min(i+a[i], n-1))
+        for i in range(n-1):
+            if i <= maxReachIdx:
+                maxReachIdx = max(maxReachIdx, i+a[i])
             else:
-                return False
+                break
 
-        return True
+            # Early stopping
+            if maxReachIdx >= len(a)-1:
+                return True
+
+        return maxReachIdx >= n-1  
