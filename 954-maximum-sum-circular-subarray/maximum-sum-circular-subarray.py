@@ -1,24 +1,27 @@
 class Solution:
     def maxSubarraySumCircular(self, a: list[int]) -> int:
+        maxSum, minSum = float("-inf"), float("inf")
+        allNeg = True
         n = len(a)
-        maxSum, minSum = -float("inf"), float("inf")
-        prevMaxSum, prevMinSum, total = 0, 0, 0
+        currSum = 0
 
+        # Finding the maximum sum subarray
         for i in range(n):
-            if prevMaxSum + a[i] > a[i]:
-                prevMaxSum = prevMaxSum+a[i]
-            else:
-                prevMaxSum = a[i]
-            
-            if prevMinSum + a[i] < a[i]:
-                prevMinSum = prevMinSum+a[i]
-            else:
-                prevMinSum = a[i]            
-                
-            maxSum = max(maxSum, prevMaxSum)
-            minSum = min(minSum, prevMinSum)
+            currSum += a[i]
+            currSum = max(currSum, a[i])
+            maxSum = max(currSum, maxSum)
+            if allNeg and (a[i] >= 0):
+                allNeg = False
 
-            total += a[i]
-        
-        # maxSum will only be negative when all terms are negative 
-        return max(maxSum, total-minSum) if maxSum > 0 else maxSum
+        if allNeg:
+            return maxSum
+
+        currSum, total = 0, 0
+        # Finding the minimum sum subarray
+        for i in range(n):
+            total += a[i] 
+            currSum += a[i]
+            currSum = min(currSum, a[i])
+            minSum = min(currSum, minSum)
+
+        return max(maxSum, total-minSum)
