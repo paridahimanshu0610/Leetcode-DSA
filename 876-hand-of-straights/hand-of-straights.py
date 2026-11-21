@@ -1,39 +1,51 @@
-import heapq 
-
 class Solution:
     def isNStraightHand(self, a: list[int], size: int) -> bool:
         n = len(a)
-        if n%size != 0:
+        if n % size != 0:
             return False
 
-        k = n//size
+        a.sort()
+        grps = []
 
-        temp = {}
-        for e in a:
-            temp[e] = 1 if e not in temp else temp[e]+1
-            
-        hp = list(temp.keys())
-        heapq.heapify(hp)
+        def findLower(aa, target):
+            if len(aa)==0:
+                return -1
 
-        def decr(key):
-            temp[key] -= 1
-            if temp[key] == 0:
-                del temp[key]
+            l, h = 0, len(aa)-1
 
-        for i in range(k):
-            min_e = heapq.heappop(hp)
-            while min_e not in temp:
-                min_e = heapq.heappop(hp)
-            decr(min_e)
-            if min_e in temp:
-                heapq.heappush(hp, min_e)
+            while l <= h:
+                mid = (l+h)//2
+                val, cnt = aa[mid]
 
-            next_e = min_e+1
-            for j in range(size-1):
-                if next_e not in temp:
-                    return False
+                if val >= target:
+                    h = mid-1
                 else:
-                    decr(next_e)
-                    next_e += 1
+                    l = mid+1
+            
+            return h
 
-        return True 
+        for i in range(n):
+            idx = findLower(grps, a[i])
+            if idx < 0:
+                grps.append((a[i], 1))
+            else:
+                val, cnt = grps[idx]
+                if (a[i] == val+1) and (cnt < size):
+                    grps[idx] = (a[i], cnt+1)
+                else:
+                    grps.append((a[i], 1))
+
+            # print(i, grps)
+            # for j in range(len(grps)):
+            #     val, cnt = grps[j]
+            #     if a[i] == val+1 and cnt < size:
+            #         grps[j] = (a[i], cnt+1)
+            #         found = True
+            #         break
+            # if not found:
+            #     grps.append((a[i], 1))
+            
+            if len(grps) > n//size:
+                return False
+
+        return True
