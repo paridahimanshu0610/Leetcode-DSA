@@ -1,21 +1,25 @@
 class Solution:
     def insert(self, intervals: list[list[int]], newInterval: list[int]) -> list[list[int]]:
-        i = 0
-        n = len(intervals)
+        intervals.sort()
+        currInterval = newInterval.copy()
         res = []
+        
+        for i in range(len(intervals)):
+            tempInterval = intervals[i]
 
-        while i < n and intervals[i][1] < newInterval[0]:
-            res.append(intervals[i])
-            i += 1
+            if len(currInterval) > 0:
+                if (tempInterval[0] <= currInterval[0] <= tempInterval[1]) or (tempInterval[0] <= currInterval[1] <= tempInterval[1]) or ((currInterval[0] < tempInterval[0]) and (currInterval[1] > tempInterval[1])):
+                    currInterval = [min(tempInterval[0], currInterval[0]), max(tempInterval[1], currInterval[1])]
+                elif currInterval[1] < tempInterval[0]:
+                    res.append(currInterval)
+                    res.append(tempInterval)
+                    currInterval = []
+                else:
+                    res.append(tempInterval)
+            else:
+                res.append(tempInterval)
 
-        while i < n and newInterval[1] >= intervals[i][0]:
-            newInterval = [min(newInterval[0], intervals[i][0]), max(newInterval[1], intervals[i][1])]
-            i += 1
-
-        res.append(newInterval)
-
-        while i < n:
-            res.append(intervals[i])
-            i += 1
+        if currInterval:
+            res.append(currInterval)
 
         return res
