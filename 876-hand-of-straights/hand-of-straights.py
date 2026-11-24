@@ -6,38 +6,33 @@ class Solution:
         if n % size != 0:
             return False
 
-        temp = {}
+        cntDict = {}
         for e in a:
-            temp[e] = 1 if e not in temp else temp[e]+1
+            cntDict[e] = 1 if e not in cntDict else cntDict[e] + 1 
         
-        hp = list(temp.keys())
-        heapq.heapify(hp)
+        heap = list(cntDict.keys())
+        heapq.heapify(heap)
 
-        def decr(item):
-            if item not in temp:
-                return
-                
-            temp[item] -= 1
-            if temp[item] == 0:
-                del temp[item]
+        def decr(key):
+            if key in cntDict:
+                cntDict[key] -= 1
+                if cntDict[key] == 0:
+                    del cntDict[key]
 
         for i in range(n//size):
-            # Finding the current group's starting element from the heap.
-            # We use heap to ensure that we always start from the lowest possible element
-            min_e = heapq.heappop(hp)
-            while min_e not in temp:
-                min_e = heapq.heappop(hp)
+            curr = heapq.heappop(heap)
+            while (curr not in cntDict) and (len(heap)>0):
+                curr = heapq.heappop(heap)
 
-            decr(min_e)
-            if min_e in temp:
-                heapq.heappush(hp, min_e)
+            decr(curr)
+            if curr in cntDict:
+                heapq.heappush(heap, curr)
 
-            curr_item = min_e+1
-            for _ in range(size-1):
-                if curr_item not in temp:
+            curr = curr+1
+            for j in range(size-1):
+                if curr not in cntDict:
                     return False
-                else:
-                    decr(curr_item)
-                    curr_item += 1
+                decr(curr)
+                curr = curr+1 
 
-        return True
+        return True 
