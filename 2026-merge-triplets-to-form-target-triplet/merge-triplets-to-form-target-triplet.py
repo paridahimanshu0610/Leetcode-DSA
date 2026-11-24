@@ -7,7 +7,4 @@ class Solution:
                 for i in range(len(merged)):
                     merged[i] = max(merged[i], curr[i])
             
-            if merged == tgt:
-                return True
-
-        return False
+        return merged == tgt
